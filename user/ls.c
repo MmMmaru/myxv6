@@ -4,7 +4,7 @@
 #include "kernel/fs.h"
 
 char*
-fmtname(char *path)
+fmtname(char *path)//路径变为文件名
 {
   static char buf[DIRSIZ+1];
   char *p;
@@ -46,19 +46,19 @@ ls(char *path)
     printf("%s %d %d %l\n", fmtname(path), st.type, st.ino, st.size);
     break;
 
-  case T_DIR:
+  case T_DIR://显示文件夹里的所有文件
     if(strlen(path) + 1 + DIRSIZ + 1 > sizeof buf){
       printf("ls: path too long\n");
       break;
     }
-    strcpy(buf, path);
+    strcpy(buf, path);//buf 是文件路径
     p = buf+strlen(buf);
     *p++ = '/';
-    while(read(fd, &de, sizeof(de)) == sizeof(de)){
+    while(read(fd, &de, sizeof(de)) == sizeof(de)){//循环读入文件夹内的所有内容
       if(de.inum == 0)
         continue;
       memmove(p, de.name, DIRSIZ);
-      p[DIRSIZ] = 0;
+      p[DIRSIZ] = 0;//改为文件绝对路径
       if(stat(buf, &st) < 0){
         printf("ls: cannot stat %s\n", buf);
         continue;
