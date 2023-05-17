@@ -8,6 +8,13 @@
 #include "proc.h"
 
 uint64
+sys_sysinfo(void){
+  int *addr;
+  if(argaddr(0, addr)<0)
+    return -1;
+  
+}
+uint64
 sys_trace(void)
 {
   int n;
