@@ -199,6 +199,12 @@ UPROGS=\
 	$U/_mytest\
 	$U/_find\
 
+	$U/_trace\
+	$U/_sysinfotest\
+
+
+
+
 ifeq ($(LAB),$(filter $(LAB), pgtbl lock))
 UPROGS += \
 	$U/_stats
