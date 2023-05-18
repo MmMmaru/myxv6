@@ -10,7 +10,7 @@ sub entry {
     my $name = shift;
     print ".global $name\n";
     print "${name}:\n";
-    print " li a7, SYS_${name}\n";
+    print " li a7, SYS_${name}\n";#在这里递交调用请求，不需要再定义函数了。
     print " ecall\n";
     print " ret\n";
 }
@@ -37,3 +37,4 @@ entry("sbrk");
 entry("sleep");
 entry("uptime");
 entry("trace");
+entry("sysinfo");
