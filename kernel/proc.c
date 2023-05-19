@@ -172,8 +172,9 @@ pagetable_t
 proc_pagetable(struct proc *p)
 {
   pagetable_t pagetable;
-  struct usyscall usyscall1;
-  usyscall1.pid=p->pid;
+  struct usyscall u;
+
+  u.pid=p->pid;
   // An empty page table.
   pagetable = uvmcreate();
   if(pagetable == 0)
