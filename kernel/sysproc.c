@@ -76,14 +76,25 @@ sys_sleep(void)
 }
 
 
-#ifdef LAB_PGTBL
 int
 sys_pgaccess(void)
 {
   // lab pgtbl: your code here.
-  return 0;
+  pte_t pte;
+  struct proc* p = myproc();
+  uint64 start_user_vaddr, bufaddr;
+  int num_pages;
+  
+  if (argaddr(0, &start_user_vaddr) < 0)
+    return -1;
+  if (argint(1, &num_pages) < 0)
+    return -1;
+  if (argaddr(2, &bufaddr))
+    return -1;
+  if (pgaccess(p->pagetable, start_user_vaddr, num_pages, bufaddr) < 0)
+    return -1;
+   return 0;
 }
-#endif
 
 uint64
 sys_kill(void)
