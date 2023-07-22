@@ -665,3 +665,20 @@ procdump(void)
     printf("\n");
   }
 }
+
+int pgaccess(pagetable_t pagetable, uint64 start_va, int num_pages, uint64 bufaddr){
+  uint64 bitmask = 0;
+  uint64 va = start_va;
+  pte_t* pte;
+  int i;
+  if (num_pages > 64)
+    return -1;
+  for (i = 0; i < num_pages; i++, va += PGSIZE){
+    if(pte = walk(pagetable, va, 0) < 0)
+      return -1;
+    bitmask |= 1<<i;
+    *pte &= ~PTE_A;
+  }
+  copyout(pagetable, bufaddr, (char*)&bitmask, sizeof(bitmask));
+  return 0;
+}

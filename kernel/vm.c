@@ -111,7 +111,7 @@ void vmprint1(pagetable_t pagetable, int level){
     pte=pagetable[i];
     if ((pte & PTE_V) && (pte & (PTE_R | PTE_W | PTE_X) == 0))
     { 
-      child = PTE2PA(pte)
+      child = PTE2PA(pte);
       printf("%s%d: pte %p pa %p", str[level], i, pte, child);
       vmprint1((pagetable_t)child, level++);
     }else if(pte & PTE_V)
