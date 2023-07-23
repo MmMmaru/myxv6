@@ -200,7 +200,7 @@ proc_pagetable(struct proc *p)
 
   //map read only pid
   if(mappages(pagetable, USYSCALL, PGSIZE,
-              (uint64)(&usyscall1), PTE_R ) < 0){
+              (uint64)(&u), PTE_R ) < 0){
     uvmunmap(pagetable, TRAPFRAME, 1, 0);
     uvmfree(pagetable, 0);
     return 0;
@@ -674,7 +674,7 @@ int pgaccess(pagetable_t pagetable, uint64 start_va, int num_pages, uint64 bufad
   if (num_pages > 64)
     return -1;
   for (i = 0; i < num_pages; i++, va += PGSIZE){
-    if(pte = walk(pagetable, va, 0) < 0)
+    if((pte = walk(pagetable, va, 0)) < 0)
       return -1;
     bitmask |= 1<<i;
     *pte &= ~PTE_A;

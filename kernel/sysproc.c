@@ -80,7 +80,6 @@ int
 sys_pgaccess(void)
 {
   // lab pgtbl: your code here.
-  pte_t pte;
   struct proc* p = myproc();
   uint64 start_user_vaddr, bufaddr;
   int num_pages;
