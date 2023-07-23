@@ -101,19 +101,20 @@ void vmprint(pagetable_t pagetable){
   printf("page table %p\n", *pagetable);
   vmprint1(pagetable, 0);
 }
-
+static const char *str[]={"..", ".. ..",".. .. .."};
 void vmprint1(pagetable_t pagetable, int level){
-  char *str[]={"..", ".. ..",".. .. .."};
+
   pte_t pte;
   uint64 child;
   int i;
   for(i=0; i<512; i++){
     pte=pagetable[i];
-    if ((pte & PTE_V) && (pte & (PTE_R | PTE_W | PTE_X)) == 0)
+    if (pte & PTE_V)//pte_v位为1
     { 
       child = PTE2PA(pte);
       printf("%s%d: pte %p pa %p\n", str[level], i, pte, child);
-      vmprint1((pagetable_t)child, level+1);
+      if((pte & (PTE_R|PTE_W|PTE_X)) == 0)//判断这三位是否都为0，若是，则指向下一项。
+        vmprint1((pagetable_t)child, level+1);
     }
   }
 }

@@ -126,6 +126,12 @@ found:
     release(&p->lock);
     return 0;
   }
+  //Allocate a usyscall page.
+  if((p->u = (struct usyscall *)kalloc()) == 0){
+    freeproc(p);
+    release(&p->lock);
+    return 0;
+  }
 
   // An empty user page table.
   p->pagetable = proc_pagetable(p);
@@ -140,6 +146,7 @@ found:
   memset(&p->context, 0, sizeof(p->context));
   p->context.ra = (uint64)forkret;
   p->context.sp = p->kstack + PGSIZE;
+  p->u->pid=p->pid;
 
   return p;
 }
@@ -150,11 +157,14 @@ found:
 static void
 freeproc(struct proc *p)
 {
+  if(p->u)
+    kfree((void*)p->u);
   if(p->trapframe)
     kfree((void*)p->trapframe);
   p->trapframe = 0;
   if(p->pagetable)
     proc_freepagetable(p->pagetable, p->sz);
+  p->u = 0;
   p->pagetable = 0;
   p->sz = 0;
   p->pid = 0;
@@ -172,9 +182,7 @@ pagetable_t
 proc_pagetable(struct proc *p)
 {
   pagetable_t pagetable;
-  struct usyscall u;
 
-  u.pid=p->pid;
   // An empty page table.
   pagetable = uvmcreate();
   if(pagetable == 0)
@@ -200,7 +208,7 @@ proc_pagetable(struct proc *p)
 
   //map read only pid
   if(mappages(pagetable, USYSCALL, PGSIZE,
-              (uint64)(&u), PTE_R ) < 0){
+              (uint64)(p->u), PTE_R | PTE_U) < 0){
     uvmunmap(pagetable, TRAPFRAME, 1, 0);
     uvmfree(pagetable, 0);
     return 0;
