@@ -88,11 +88,11 @@ sys_pgaccess(void)
     return -1;
   if (argint(1, &num_pages) < 0)
     return -1;
-  if (argaddr(2, &bufaddr))
+  if (argaddr(2, &bufaddr) < 0)
     return -1;
   if (pgaccess(p->pagetable, start_user_vaddr, num_pages, bufaddr) < 0)
     return -1;
-   return 0;
+  return 0;
 }
 
 uint64
