@@ -9,6 +9,8 @@ struct sleeplock;
 struct stat;
 struct superblock;
 
+int ref_count[PHYSTOP/PGSIZE];
+
 // bio.c
 void            binit(void);
 struct buf*     bread(uint, uint);
