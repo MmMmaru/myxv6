@@ -70,28 +70,8 @@ usertrap(void)
   } 
     else if (r_scause() == 15 || r_scause() == 13){ //cow fork
       uint64 va = r_stval();
-      uint64 ka = (uint64)kalloc();
-      pte_t* pte;
-
-      if ((pte = walk(p->pagetable, va, 0)) == 0)
+      if(cow_copy(p->pagetable, va) == 0){
         p->killed = 1;
-      
-      if (*pte & PTE_C){
-        if (ka == 0)
-          p->killed = 1;
-        else{
-          va = PGROUNDDOWN(va);
-          memmove(ka, va, PGSIZE);
-          *pte = (*pte) & (~PTE_V);
-          uint64 flags = PTE_FLAGS(*pte);
-          flags |= PTE_W;
-          flags &= ~PTE_C;
-          if(mappages(p->pagetable, va, PGSIZE, ka, flags))
-            {  
-              kfree((void*)ka);
-              p->killed = 1;
-            }
-        }
       }
       
     }
